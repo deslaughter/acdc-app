@@ -2,6 +2,7 @@ package main
 
 import (
 	"acdc/diagram"
+	"acdc/viz"
 	"encoding/json"
 	"fmt"
 	"os"
@@ -16,6 +17,7 @@ type Project struct {
 	Evaluate *Evaluate        `json:"Evaluate"`
 	Results  *Results         `json:"Results"`
 	Diagram  *diagram.Diagram `json:"Diagram"`
+	VTKFile  *viz.VTKFile     `json:"VTKFile"`
 }
 
 type Info struct {

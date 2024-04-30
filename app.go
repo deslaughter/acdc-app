@@ -2,8 +2,10 @@ package main
 
 import (
 	"acdc/diagram"
+	"acdc/viz"
 	"bytes"
 	"context"
+	"encoding/base64"
 	"fmt"
 	"os"
 	"os/exec"
@@ -550,4 +552,89 @@ func (a *App) GenerateDiagram(maxFreqHz float64, doCluster bool) (*diagram.Diagr
 	}
 
 	return diag, nil
+}
+
+//--------------------------------------------------------------------------
+// VTK
+//--------------------------------------------------------------------------
+
+func (a *App) GetVTKFile() ([]string, error) {
+	// Read Turbine component VTK Files
+
+	// Current working directory:  /Users/sryu/Desktop/FY24/ACDC/acdc-app
+	curr_dir, err := os.Getwd() // get the current working directory
+	if err != nil {
+		fmt.Println(err)
+	}
+	fmt.Println("Current working directory: ", curr_dir)
+
+	// Glob *.vtp files
+	pattern := "*.vtp"
+	matches, err := os.ReadDir("viz/testdata")
+	if err != nil {
+		fmt.Println(err)
+	}
+
+	var vtp_files []string
+	for _, match := range matches {
+		f, _ := filepath.Match(pattern, match.Name())
+		if f {
+			vtp_files = append(vtp_files, match.Name())
+		}
+	}
+	fmt.Println("Found vtp files: ", vtp_files)
+
+	var out_list []string
+	var empty_list []string
+	for _, file := range vtp_files {
+		if !(file == "BD_BldMotion1.001.vtp" || file == "ED_TowerLn2Mesh_motion.001.vtp") {
+			continue
+		}
+
+		fmt.Println("Add file: ", file)
+		out, err := os.ReadFile(curr_dir + "/viz/testdata/" + file)
+		if err != nil {
+			fmt.Println(err)
+			return empty_list, err
+		}
+		out_list = append(out_list, "data:text/plain;base64,"+base64.StdEncoding.EncodeToString(out))
+	}
+	fmt.Println("out_list: ", len(out_list))
+
+	return out_list, nil
+
+	//out, err := os.ReadFile("/Users/sryu/Desktop/FY24/ACDC/acdc-app/viz/testdata/GroundSurface.vtp") // working
+	// out, err := os.ReadFile("/Users/sryu/Desktop/FY24/ACDC/acdc-app/viz/testdata/cube_ascii.vtp") // working
+	// out, err := os.ReadFile("/Users/sryu/Desktop/FY24/ACDC/acdc-app/viz/testdata/ED_Hub.001.vtp")
+	//out, err := os.ReadFile("/Users/sryu/Desktop/FY24/ACDC/acdc-app/viz/testdata/BD_BldMotion1.001.vtp") // working
+	// out, err := os.ReadFile(curr_dir + "/viz/testdata/ED_TowerLn2Mesh_motion.001.vtp") // working
+	// if err != nil {
+	// 	return "", err
+	// }
+
+	// return "data:text/plain;base64," + base64.StdEncoding.EncodeToString(out), nil
+}
+
+func (a *App) LoadVTKFile() ([]*viz.VTKFile, error) {
+	testFiles := []string{
+		"viz/testdata/BD_BldMotion1.001.vtp",
+		"viz/testdata/ED_Hub.001.vtp",
+		"viz/testdata/ED_Nacelle.001.vtp",
+		"viz/testdata/ED_TailFin.001.vtp",
+		"viz/testdata/ED_TowerLn2Mesh_motion.001.vtp",
+		"viz/testdata/GroundSurface.vtp",
+	}
+
+	var resList []*viz.VTKFile
+
+	for _, testFile := range testFiles {
+		res, err := viz.LoadVTK(testFile)
+		resList = append(resList, res)
+		fmt.Println(res)
+		if err != nil {
+			fmt.Println(err)
+		}
+	}
+
+	return resList, nil
 }

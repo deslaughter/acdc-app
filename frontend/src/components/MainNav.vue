@@ -28,6 +28,9 @@ onMounted(() => { })
                     <li class="nav-item" v-if="project.loaded">
                         <router-link class="nav-link" to="/Results">Results</router-link>
                     </li>
+                    <li class="nav-item" v-if="project.loaded">
+                        <router-link class="nav-link" to="/vtk">VTK</router-link>
+                    </li>
                 </ul>
                 <span class="navbar-text me-2" v-if="project.saving">
                     <div class="spinner-border spinner-border-sm text-light" role="status">

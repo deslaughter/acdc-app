@@ -24,5 +24,9 @@ export default createRouter({
             path: '/results',
             component: () => import('./components/Results.vue'),
         },
+        {
+            path: '/vtk',
+            component: () => import('./components/Vtk.vue'),
+        },
     ],
 })
