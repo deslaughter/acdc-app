@@ -311,13 +311,15 @@ export const useProjectStore = defineStore('project', () => {
         status.viz = LOADING
         return new Promise<viz.ModeData>((resolve, reject) => {
             GetModeViz(opID, modeID, scale).then(result => {
-                console.log(result)
+                console.log('result: ', result)
                 const found = modeViz.find((md) => result.OPID == md.OPID && result.ModeID == md.ModeID)
+                console.log('found: ', found)
                 if (found !== undefined) {
                     Object.assign(found, result)
                 } else {
                     modeViz.push(result);
                 }
+                console.log('modeViz: ', modeViz)
                 status.viz = LOADED
                 resolve(result)
             }).catch(err => {

@@ -27,6 +27,7 @@ let delta = 0;
 const FOV = 10;
 
 function addFrames(modeData: viz.ModeData) {
+    console.log('ModeData in the canvas: ', modeData)
     scene.clear()
     const axesHelper = new THREE.AxesHelper(10);
     scene.add(axesHelper)

@@ -1,5 +1,5 @@
 <script lang="ts" setup>
-import { ref, onMounted, computed, reactive } from 'vue'
+import { h, ref, onMounted, computed, reactive, VueElement } from 'vue'
 import { useProjectStore, LOADED, LOADING, NOT_LOADED } from '../project';
 import { Scatter } from 'vue-chartjs'
 import { Chart, ChartData, ChartOptions, ChartEvent, ActiveElement, ScriptableContext } from 'chart.js'
@@ -22,6 +22,7 @@ const dampChart = ref<ChartComponentRef<'scatter'> | null>(null)
 const doCluster = ref(false)
 const xAxisWS = ref(true)
 const rotorSpeedMods = [1, 3, 6, 9, 12, 15]
+let clickedMVIdx = ref(0)
 
 interface Graph {
     options: ChartOptions<'scatter'>
@@ -46,6 +47,12 @@ function getModeViz(opID: number, modeID: number) {
     }).catch(err => {
 
     })
+}
+
+function selectModeViz(opID: number, modeID: number) {
+    console.log('clicked op, mode:', opID, modeID)
+    clickedMVIdx.value = project.modeViz.findIndex(x => (x.OPID == opID) && (x.ModeID == modeID))
+    console.log('clickedMVIdx: ', clickedMVIdx)
 }
 
 const charts = computed(() => {
@@ -417,14 +424,14 @@ const charts = computed(() => {
                 <div class="row">
                     <div class="col-9">
                         <div style="width:100%; height: 500px">
-                            <ModeViz :ModeData="project.modeViz[project.modeViz.length - 1]">
+                            <ModeViz :key="clickedMVIdx" :ModeData="project.modeViz[clickedMVIdx]">
                             </ModeViz>
                         </div>
                     </div>
                     <div class="col-3">
                         <div class="list-group">
                             <a class="list-group-item list-group-item-action" v-for="mv in project.modeViz"
-                                :class="{ active: (selectedPoint.OpPtID == mv.OPID) && (selectedPoint.ModeID == mv.ModeID) }">
+                                @click="selectModeViz(mv.OPID, mv.ModeID)">
                                 OP: {{ mv.OPID }}, Mode: {{ mv.ModeID }}
                             </a>
                         </div>
