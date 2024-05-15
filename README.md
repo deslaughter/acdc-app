@@ -1,3 +1,6 @@
+> [!IMPORTANT]
+> This repository has been archived. ACDC development is continuing at https://github.com/OpenFAST/acdc as part of the OpenFAST organization.
+
 # ACDC: Automated Campbell Diagram Capabilities
 
 This application provides a web-based graphical user interface to generating Campbell Diagrams and visualizing mode shapes for OpenFAST turbine models.
